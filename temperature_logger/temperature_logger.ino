@@ -6,6 +6,9 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+#include <DHT.h>
+
+
 #define DEBUG 1
 
 void setup(){
@@ -17,36 +20,45 @@ void setup(){
   rtc_module_setup();
   sd_module_setup();
   water_tta_modules_setup();
-  //flow_module_setup();
-  //room_tta_modules_setup();
+  flow_modules_setup();
+  room_tta_modules_setup();
   //pyra_module_setup();
 }
 
-void loop(){
-  String dataString = "";
-  
-  //poll rtc
-  dataString = rtc_get_time();
-  dataString += ",";
-  //poll tta
-  dataString += water_tta_get_temperatures();
-  dataString += ",";
-  
-#ifdef DEBUG
-  Serial.println(dataString);
-#endif
-  
-  
-  //poll flow
-  
-  //poll room_tta
-  
-  //poll pyra
-  
-  //write to sd
-  writeToSd(dataString);
+unsigned long oldTime;
+int frequency = 1000;
 
-  delay(1000);
+void loop(){
+
+  if((millis() - oldTime) > frequency){
+    String dataString = "";
+    
+    //poll rtc
+    dataString = rtc_get_time();
+    dataString += ",";
+    //poll tta
+    dataString += water_tta_get_temperatures();
+    dataString += ",";
+    
+    //poll flow
+    dataString += flow_modules_get();
+    dataString += ",";
+    
+    //poll room_tta
+    dataString += room_tta_modules_get_temperatures();
+    dataString += ",";
+    
+    //poll pyra
+      
+#ifdef DEBUG
+    Serial.println(dataString);
+#endif
+    
+    //write to sd
+    writeToSd(dataString);
+
+  }
+  //delay(1000); //change to something like if((millis() - oldTime) > 1000) 
 }
 
 

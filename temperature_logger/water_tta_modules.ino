@@ -16,7 +16,7 @@
 //#include <DallasTemperature.h>
 
 /*-----( Declare Constants and Pin Numbers )-----*/
-#define ONE_WIRE_BUS_PIN 2
+#define ONE_WIRE_BUS_PIN 5
 
 /*-----( Declare objects )-----*/
 // Setup a oneWire instance to communicate with any OneWire devices
