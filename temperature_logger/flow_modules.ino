@@ -1,4 +1,4 @@
-// PINS 9 & 10 digital
+// PINS 2 & 3 digital
 
 /*
 Liquid flow rate sensor -DIYhacking.com Arvind Sanjeev
@@ -9,23 +9,14 @@ signal line to arduino digital pin 2.
  
  */
 
-//byte statusLed    = 13;
-
-byte sensorInterrupt = 0;  // 0 = digital pin 2
-byte sensorPin       = 2;
-
-byte flow_Sensors[] = {
-  0,1
-};
-
 // The hall-effect flow sensor outputs approximately 4.5 pulses per second per
 // litre/minute of flow.
 float calibrationFactor = 4.5;
 
-volatile byte pulseCount[3];  
+volatile byte pulseCount[2];  
 
-float flowRate[3];
-unsigned int flowMilliLitres[3];
+float flowRate[2];
+unsigned int flowMilliLitres[2];
 
 void flow_modules_setup()
 {
@@ -37,6 +28,9 @@ void flow_modules_setup()
   //pinMode(statusLed, OUTPUT);
   //digitalWrite(statusLed, HIGH);  // We have an active-low LED attached
   
+#ifdef DEBUG  
+  Serial.println("Initializing Flow MODULES");
+#endif
   pinMode(2, INPUT);
   digitalWrite(2, HIGH);
   pinMode(3, INPUT);
@@ -53,8 +47,8 @@ void flow_modules_setup()
   // The Hall-effect sensor is connected to pin 2 which uses interrupt 0.
   // Configured to trigger on a FALLING state change (transition from HIGH
   // state to LOW state)
-  attachInterrupt(sensorInterrupt, pulseCounter0, FALLING);
-  attachInterrupt(sensorInterrupt, pulseCounter1, FALLING);
+  attachInterrupt(0, pulseCounter0, FALLING);
+  attachInterrupt(1, pulseCounter1, FALLING);
 }
 
 /**
@@ -67,7 +61,8 @@ String flow_modules_get()
 {
     // Disable the interrupt while calculating flow rate and sending the value to
     // the host
-    detachInterrupt(sensorInterrupt);
+    detachInterrupt(0);
+    detachInterrupt(1);
         
     // Because this loop may not complete in exactly 1 second intervals we calculate
     // the number of milliseconds that have passed since the last execution and use
@@ -94,29 +89,29 @@ String flow_modules_get()
     unsigned int frac1;
 
     // Print the flow rate for this second in litres / minute
-    Serial.print("Flow rate: ");
-    Serial.print(int(flowRate));  // Print the integer part of the variable
-    Serial.print(".");             // Print the decimal point
+    //Serial.print("Flow rate: ");
+    //Serial.print(int(flowRate));  // Print the integer part of the variable
+    //Serial.print(".");             // Print the decimal point
     // Determine the fractional part. The 10 multiplier gives us 1 decimal place.
     frac0 = (flowRate[0] - int(flowRate[0])) * 10;
-    Serial.print(frac0, DEC) ;      // Print the fractional part of the variable
-    Serial.print("L/min");
+    //Serial.print(frac0, DEC) ;      // Print the fractional part of the variable
+    //Serial.print("L/min");
     // Print the number of litres flowed in this second
-    Serial.print("  Current Liquid Flowing 0: ");             // Output separator
-    Serial.print(flowMilliLitres[0]);
-    Serial.print("mL/Sec");
+    //Serial.print("  Current Liquid Flowing 0: ");             // Output separator
+    //Serial.print(flowMilliLitres[0]);
+    //Serial.println("mL/Sec");
 
     // Print the flow rate for this second in litres / minute
-    Serial.print("Flow rate: ");
-    Serial.print(int(flowRate));  // Print the integer part of the variable
-    Serial.print(".");             // Print the decimal point
+    //Serial.print("Flow rate: ");
+    //Serial.print(int(flowRate));  // Print the integer part of the variable
+    //Serial.print(".");             // Print the decimal point
     // Determine the fractional part. The 10 multiplier gives us 1 decimal place.
     frac1 = (flowRate[1] - int(flowRate[1])) * 10;
-    Serial.print(frac1, DEC) ;      // Print the fractional part of the variable
-    Serial.print("L/min");
-    Serial.print("  Current Liquid Flowing 1: ");             // Output separator
-    Serial.print(flowMilliLitres[1]);
-    Serial.print("mL/Sec");
+    //Serial.print(frac1, DEC) ;      // Print the fractional part of the variable
+    //Serial.print("L/min");
+    //Serial.print("  Current Liquid Flowing 1: ");             // Output separator
+    //Serial.print(flowMilliLitres[1]);
+    //Serial.println("mL/Sec");
 #endif
 
     // Reset the pulse counter so we can start incrementing agaiun
@@ -124,10 +119,11 @@ String flow_modules_get()
     pulseCount[1] = 0;
     
     // Enable the interrupt again now that we've finished sending output
-    attachInterrupt(sensorInterrupt, pulseCounter0, FALLING);
-    attachInterrupt(sensorInterrupt, pulseCounter1, FALLING);
-
-    return flowMilliLitres[0] + "," + flowMilliLitres[1];
+    attachInterrupt(0, pulseCounter0, FALLING);
+    attachInterrupt(1, pulseCounter1, FALLING);
+    
+    return String(flowMilliLitres[0]) + "," + String(flowMilliLitres[1]);
+    
 }
 
 /*

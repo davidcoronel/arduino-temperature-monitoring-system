@@ -1,3 +1,5 @@
+// PINS 4 & 5
+
 // DS3231_Serial_Easy
 // Copyright (C)2015 Rinky-Dink Electronics, Henning Karlsen. All right reserved
 // web: http://www.RinkyDinkElectronics.com/
@@ -37,9 +39,9 @@ void rtc_module_setup(){
   rtc.begin();
   
   // The following lines can be uncommented to set the date and time
-  //rtc.setDOW(WEDNESDAY);     // Set Day-of-Week to SUNDAY
-  //rtc.setTime(12, 0, 0);     // Set the time to 12:00:00 (24hr format)
-  //rtc.setDate(1, 1, 2014);   // Set the date to January 1st, 2014
+  //rtc.setDOW(SATURDAY);     // Set Day-of-Week to SUNDAY
+  //rtc.setTime(22, 9, 0);     // Set the time to 12:00:00 (24hr format)
+  //rtc.setDate(30, 7, 2016);   // Set the date to January 1st, 2014
 }
 
 String rtc_get_time(){
@@ -48,12 +50,12 @@ String rtc_get_time(){
   //int currentDateTime = rtc.getUnixTime(rtc.getTime());
   
 #ifdef DEBUG  
-  Serial.print("RTC: ");
+  //Serial.print("RTC: ");
   // Send date
-  Serial.print(rtc.getDateStr());
-  Serial.print(" -- ");
+  //Serial.print(rtc.getDateStr());
+  //Serial.print(" -- ");
   // Send time
-  Serial.println(rtc.getTimeStr());
+  //Serial.println(rtc.getTimeStr());
 #endif
   String res = rtc.getDateStr() + String(" ") + rtc.getTimeStr();
   return res;

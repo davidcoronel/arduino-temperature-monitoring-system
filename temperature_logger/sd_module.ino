@@ -1,3 +1,5 @@
+// PINS 4,11,12,13
+
 /*
   SD card datalogger
 
@@ -33,7 +35,7 @@ void sd_module_setup() {
   }
 
 #ifdef DEBUG
-  Serial.print("Initializing SD card...");
+  Serial.print(F("Initializing SD card..."));
 #endif
 
   // see if the card is present and can be initialized:
@@ -45,7 +47,7 @@ void sd_module_setup() {
     return;
   }
 #ifdef DEBUG
-  Serial.println("card initialized.");
+  Serial.println(F("card initialized."));
 #endif
 }
 
@@ -66,7 +68,7 @@ void writeToSd(String dataString){
   // if the file isn't open, pop up an error:
   else {
 #ifdef DEBUG
-    Serial.println("error opening datalog.txt");
+    Serial.println(F("error opening datalog.txt"));
 #endif
   }
 }
